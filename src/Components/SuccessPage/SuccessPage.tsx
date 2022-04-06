@@ -1,9 +1,14 @@
 import React from 'react'
+import { useHistory } from 'react-router-dom'
 import Typography from '@mui/material/Typography'
 import logo from '../../assets/logo.png'
 import emailLogo from '../../assets/emailLogo.png'
 
 const SuccessPage = () => {
+    const history = useHistory()
+
+    console.log('history', history)
+
     return (
         <div className='main'>
             <div className='main1'>

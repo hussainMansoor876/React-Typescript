@@ -1,9 +1,15 @@
-import React, { useState, FormEvent } from 'react'
-import { Stack, Button } from '@mui/material'
+import React, { useState } from 'react'
+import Stack from '@mui/material/Stack'
+import Button from '@mui/material/Button'
+import Snackbar from '@mui/material/Snackbar'
+import MuiAlert from '@mui/material/Alert'
 import CircularProgress from '@mui/material/CircularProgress'
 import PhoneInput from 'react-phone-input-2'
+import axios from 'axios'
+import { useHistory } from 'react-router-dom'
 import TextInputField from './TextInputField'
 import { capitalizeLetter, validateEmail, regexCondition } from '../../utils/helpers'
+import allPaths from '../../Config/paths'
 
 const Signup = () => {
   const [firstName, setFirstName] = useState<string>('')
@@ -13,10 +19,12 @@ const Signup = () => {
   const [password, setPassword] = useState<string>('')
   const [isClicked, setIsClicked] = useState<boolean>(false)
   const [loading, setLoading] = useState<boolean>(false)
+  const [open, setOpen] = useState<boolean>(false)
+  const [success, setSuccess] = useState<boolean>(false)
+  const [message, setMessage] = useState<string>('Oops, Something went Wrong!')
+  const history = useHistory()
 
   const handleClick = () => {
-
-    console.log('regexCondition', regexCondition.test(password))
 
     if (firstName === '' || lastName === '' || password === '' || phoneNumber === '' || email === '') {
       setIsClicked(true)
@@ -29,6 +37,55 @@ const Signup = () => {
     if (!regexCondition.test(password)) {
       return
     }
+
+    const obj: object = {
+      firstName,
+      lastName,
+      phoneNumber,
+      email,
+      password
+    }
+
+    setLoading(true)
+
+    axios.post(`http://localhost:4000/api/auth/signup`, obj)
+      .then((res) => {
+        const { data } = res
+        if (data?.success === true) {
+          setSuccess(true)
+          setOpen(true)
+          setMessage(data?.message ?? 'Succcessfully Registered!')
+
+          setTimeout(() => {
+            console.log('data', data)
+            setFirstName('')
+            setlastName('')
+            setEmail('')
+            setPassword('')
+            setPhoneNumber('')
+            history.push(allPaths?.SUCCESS, data?.user)
+          }, 500)
+        }
+        else {
+          setOpen(true)
+          setMessage(data?.message ?? message)
+        }
+
+        setTimeout(() => {
+          setOpen(false)
+        }, 2000)
+        setLoading(false)
+      })
+      .catch((e) => {
+        console.log('e', e)
+        setSuccess(true)
+        setOpen(true)
+        setLoading(false)
+
+        setTimeout(() => {
+          setOpen(false)
+        }, 2000)
+      })
   }
 
   const validatePhoneCode = (e: string): void => e?.startsWith('1') === false ? setPhoneNumber(`1${e}`) : setPhoneNumber(e)
@@ -80,8 +137,8 @@ const Signup = () => {
           id='reddit-input'
           variant='filled'
           fullWidth
-          error={email === '' ? false : (validateEmail(email) === null || validateEmail(email)?.length !== 0) ? false : true}
-          helperText={email !== '' && (validateEmail(email) === null || validateEmail(email)?.length !== 0) ? 'Invalid Email address' : null}
+          error={email === '' ? false : (validateEmail(email) === null || validateEmail(email)?.length === 0) ? true : false}
+          helperText={email !== '' && (validateEmail(email) === null || validateEmail(email)?.length === 0) ? 'Invalid Email address' : null}
           value={email}
           inputProps={{
             className: `${isClicked && firstName !== '' && lastName !== '' && phoneNumber !== '' && email === '' && 'validate-input'}`
@@ -110,6 +167,20 @@ const Signup = () => {
           onClick={handleClick}
         >{loading ? <CircularProgress style={{ color: '#ffffff' }} size={24} /> : 'Next'}</Button>
       </div>
+      <Snackbar
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        open={open}
+        autoHideDuration={3000}
+      >
+        <MuiAlert
+          elevation={6}
+          variant='filled'
+          severity={success ? 'success' : 'error'}
+          sx={{ width: '100%' }}
+        >
+          {message}
+        </MuiAlert>
+      </Snackbar>
     </div>
   )
 }
