@@ -1,8 +1,9 @@
-import React, { ChangeEvent, useState, MouseEvent } from 'react'
-import { Button, Stack } from '@mui/material'
+import React, { useState, FormEvent } from 'react'
+import { Stack, Button } from '@mui/material'
+import CircularProgress from '@mui/material/CircularProgress'
 import PhoneInput from 'react-phone-input-2'
-import 'react-phone-input-2/lib/style.css'
 import TextInputField from './TextInputField'
+import { capitalizeLetter, validateEmail, regexCondition } from '../utils/helpers'
 
 const Signup = () => {
   const [firstName, setFirstName] = useState<string>('')
@@ -11,38 +12,26 @@ const Signup = () => {
   const [email, setEmail] = useState<string>('')
   const [password, setPassword] = useState<string>('')
   const [isClicked, setIsClicked] = useState<boolean>(false)
+  const [loading, setLoading] = useState<boolean>(false)
 
-  const handleClick = (event: MouseEvent) => {
-    // firstNameRef.current.className += ` validate-input`
-    // let interavl = setInterval(() => {
-    //   if (firstNameRef?.current) {
-    //     console.log('hello')
-    //     // firstNameRef.current.style.backgroundColor = `rgba(152, 225, 255, ${opacity})`
-    //     // firstNameRef.current.style.borderColor = `rgba(64, 198, 255, ${opacity})`
+  const handleClick = () => {
 
-    //     // setOpacity(opacity - 0.1)
-    //   }
+    console.log('regexCondition', regexCondition.test(password))
 
-    //   if (opacity === 0.5) {
-    //     clearInterval(interavl)
-    //   }
-    // }, 100)
-
-    if (!firstName?.length || !lastName?.length || !password?.length || !email?.length) {
+    if (firstName === '' || lastName === '' || password === '' || phoneNumber === '' || email === '') {
       setIsClicked(true)
 
       return setTimeout(() => {
         setIsClicked(false)
       }, 500)
     }
-    console.log({
-      firstName, lastName, password, email, phoneNumber
-    })
+
+    if (!regexCondition.test(password)) {
+      return
+    }
   }
 
-  const validateEmail = (e: string) => {
-    return String(e).toLowerCase().match(/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/)
-  }
+  const validatePhoneCode = (e: string): void => e?.startsWith('1') === false ? setPhoneNumber(`1${e}`) : setPhoneNumber(e)
 
   return (
     <div className='main'>
@@ -54,10 +43,10 @@ const Signup = () => {
             variant='filled'
             style={{ marginTop: 11 }}
             inputProps={{
-              className: `${isClicked && !firstName?.length ? 'validate-input input-transition' : 'input-transition'}`
+              className: `${isClicked && firstName === '' ? 'validate-input input-transition' : 'input-transition'}`
             }}
             value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
+            onChange={(e) => setFirstName(capitalizeLetter(e.target.value))}
           />
 
           <TextInputField
@@ -67,21 +56,22 @@ const Signup = () => {
             style={{ marginTop: 11, marginBottom: 11 }}
             value={lastName}
             inputProps={{
-              className: `${isClicked && firstName?.length && !lastName?.length ? 'validate-input' : 'input-transition'}`
+              className: `${isClicked && firstName !== '' && lastName === '' ? 'validate-input' : 'input-transition'}`
             }}
-            onChange={(e) => setlastName(e.target.value)}
+            onChange={(e) => setlastName(capitalizeLetter(e.target.value))}
           />
 
         </Stack>
         <PhoneInput
-          inputClass={`phoneInput ${isClicked && firstName?.length && lastName?.length && !phoneNumber?.length ? 'validate-input' : 'input-transition'}`}
+          inputClass={`phoneInput ${isClicked && firstName !== '' && lastName !== '' && phoneNumber === '' ? 'validate-input' : 'input-transition'}`}
           country={'us'}
           disableCountryCode={true}
+          // countryCodeEditable={false}
           placeholder='Phone number'
           disableDropdown={true}
-          buttonClass={isClicked && firstName?.length && lastName?.length && !phoneNumber?.length ? 'validate-input' : 'input-transition'}
+          buttonClass={isClicked && firstName !== '' && lastName !== '' && phoneNumber === '' ? 'validate-input' : 'input-transition'}
           value={phoneNumber}
-          onChange={((e) => setPhoneNumber(e))}
+          onChange={validatePhoneCode}
         />
 
         <TextInputField
@@ -90,16 +80,13 @@ const Signup = () => {
           id='reddit-input'
           variant='filled'
           fullWidth
-          error={!email?.length ? false : validateEmail(email)?.length ? false : true}
-          helperText='Invalid Email address'
+          error={email === '' ? false : (validateEmail(email) === null || validateEmail(email)?.length !== 0) ? false : true}
+          helperText={email !== '' && (validateEmail(email) === null || validateEmail(email)?.length !== 0) ? 'Invalid Email address' : null}
           value={email}
           inputProps={{
-            className: `${isClicked && firstName?.length && lastName?.length && phoneNumber?.length && !email?.length && 'validate-input'}`
+            className: `${isClicked && firstName !== '' && lastName !== '' && phoneNumber !== '' && email === '' && 'validate-input'}`
           }}
-          onChange={(e) => setEmail(e.target.value)}
-          // value={email}
-          // onChange={(e) => { setEmail(e.target.value) }}
-
+          onChange={(e) => setEmail(e.target.value?.toLocaleLowerCase())}
           style={{ marginTop: 11 }}
         />
         <TextInputField
@@ -110,29 +97,18 @@ const Signup = () => {
           fullWidth
           value={password}
           inputProps={{
-            className: `${isClicked && firstName?.length && lastName?.length && phoneNumber?.length && email?.length && !password?.length && 'validate-input'}`
+            className: `${isClicked && firstName !== '' && lastName !== '' && phoneNumber !== '' && email !== '' && password === '' && 'validate-input'}`
           }}
+          helperText={!regexCondition.test(password) ? 'Oops You need a password longer than 8 characters with numbers and letters' : null}
+          error={!regexCondition.test(password) ? true : false}
           onChange={(e) => setPassword(e.target.value)}
-          // value={email}
-          // onChange={(e) => { setPassword(e.target.value) }}
-          // onchange={onchange>(e:number)}
           style={{ marginTop: 11 }}
         />
-
         <Button
-          sx={{
-            marginTop: 2,
-            padding: 2,
-            borderRadius: '1',
-            ml: 1,
-            color: '#FFFFFF'
-          }}
-          fullWidth
-          variant="contained"
+          variant='contained'
+          className='form-btn'
           onClick={handleClick}
-        >
-          Next
-        </Button>
+        >{loading ? <CircularProgress style={{ color: '#ffffff' }} size={24} /> : 'Next'}</Button>
       </div>
     </div>
   )
