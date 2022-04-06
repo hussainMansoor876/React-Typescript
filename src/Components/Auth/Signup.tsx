@@ -3,7 +3,7 @@ import { Stack, Button } from '@mui/material'
 import CircularProgress from '@mui/material/CircularProgress'
 import PhoneInput from 'react-phone-input-2'
 import TextInputField from './TextInputField'
-import { capitalizeLetter, validateEmail, regexCondition } from '../utils/helpers'
+import { capitalizeLetter, validateEmail, regexCondition } from '../../utils/helpers'
 
 const Signup = () => {
   const [firstName, setFirstName] = useState<string>('')

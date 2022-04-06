@@ -42,3 +42,38 @@
   padding: 10px 0 !important;
   color: #ffffff !important;
 }
+
+.emailImg {
+  font-weight: 900;
+  margin-left: -15px;
+}
+
+.second {
+  display: flex;
+  flex-direction: row;
+}
+
+.third {
+  margin-top: 150px;
+}
+
+.main {
+  display: flex;
+  justify-content: center;
+}
+
+.main1 {
+  margin-top: 50px;
+  width: 450px;
+  padding: 10px;
+}
+
+@media screen and (max-width: 500px) {
+
+  .main1 {
+    margin-top: 20px;
+    width: 450px;
+    padding: 15px;
+    border: none;
+  }
+}
