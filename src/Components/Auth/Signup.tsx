@@ -48,7 +48,7 @@ const Signup = () => {
 
     setLoading(true)
 
-    axios.post(`https://node-app-2srt3mou6a-uc.a.run.app/api/auth/signup`, obj)
+    axios.post(`http://localhost:4000/api/auth/signup`, obj)
       .then((res) => {
         const { data } = res
         if (data?.success === true) {
