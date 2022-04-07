@@ -1,17 +1,8 @@
 
-import React, { forwardRef } from 'react'
-import { FormControl, InputLabel, Input, Stack } from '@mui/material'
+import React from 'react'
 import TextField, { TextFieldProps } from '@mui/material/TextField'
 import { alpha, styled } from '@mui/material/styles'
-import InputBase from '@mui/material/InputBase'
-import Box from '@mui/material/Box'
 import { OutlinedInputProps } from '@mui/material/OutlinedInput'
-
-const FancyButton = React.forwardRef<HTMLButtonElement>((props, ref) => (
-    <button type="button" ref={ref} className="FancyButton">
-        {props.children}
-    </button>
-))
 
 const TextInputField = styled((props: TextFieldProps) => (
     <TextField
@@ -23,7 +14,6 @@ const TextInputField = styled((props: TextFieldProps) => (
         border: '1px solid #e2e2e1',
         overflow: 'hidden',
         borderRadius: 2,
-        // backgroundColor: theme.palette.mode === 'light' ? '#fcfcfb' : '#2b2b2b',
         backgroundColor: 'white',
         transition: theme.transitions.create([
             'border-color',
