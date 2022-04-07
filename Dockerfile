@@ -19,4 +19,6 @@ RUN yarn global add serve
 
 COPY --from=client-app /client/build ./client/build
 
+COPY . ./
+
 CMD ["yarn", "run", "production"]
