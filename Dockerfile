@@ -1,3 +1,4 @@
+
 FROM node:16 as client-app
 
 WORKDIR /client
@@ -12,13 +13,10 @@ COPY ./src ./src
 
 RUN yarn run build
 
-FROM node:16 as react-app
-WORKDIR /root/
+FROM nginx:latest
 
-RUN yarn global add serve
+COPY --from=client-app /client/build/ /usr/share/nginx/html
 
-COPY --from=client-app /client/build ./client/build
+EXPOSE 8080
 
-COPY . ./
-
-CMD ["yarn", "run", "production"]
+CMD ["nginx", "-g", "daemon off;"]
