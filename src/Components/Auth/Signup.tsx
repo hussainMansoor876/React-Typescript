@@ -48,7 +48,7 @@ const Signup = () => {
 
     setLoading(true)
 
-    const apiUrl: string = window?.location?.hostname === 'localhost' ? 'http://localhost:4000': 'https://node-app-2srt3mou6a-uc.a.run.app'
+    const apiUrl: string = window?.location?.hostname === 'localhost' ? 'http://localhost:4000' : 'https://node-app-2srt3mou6a-uc.a.run.app'
 
     axios.post(`${apiUrl}/api/auth/signup`, obj)
       .then((res) => {
@@ -158,8 +158,8 @@ const Signup = () => {
           inputProps={{
             className: `${isClicked && firstName !== '' && lastName !== '' && phoneNumber !== '' && email !== '' && password === '' && 'validate-input'}`
           }}
-          helperText={!regexCondition.test(password) ? 'Oops You need a password longer than 8 characters with numbers and letters' : null}
-          error={!regexCondition.test(password) ? true : false}
+          helperText={password === '' ? null : !regexCondition.test(password) ? 'Oops You need a password longer than 8 characters with numbers and letters' : null}
+          error={password === '' ? false : !regexCondition.test(password) ? true : false}
           onChange={(e) => setPassword(e.target.value)}
           style={{ marginTop: 11 }}
         />
