@@ -6,7 +6,7 @@ import MuiAlert from '@mui/material/Alert'
 import CircularProgress from '@mui/material/CircularProgress'
 import PhoneInput from 'react-phone-input-2'
 import axios from 'axios'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useLocation } from 'react-router-dom'
 import TextInputField from './TextInputField'
 import { capitalizeLetter, validateEmail, regexCondition } from '../../utils/helpers'
 import allPaths from '../../Config/paths'
@@ -48,7 +48,9 @@ const Signup = () => {
 
     setLoading(true)
 
-    axios.post(`http://localhost:4000/api/auth/signup`, obj)
+    const apiUrl: string = window?.location?.hostname === 'localhost' ? 'http://localhost:4000': 'https://node-app-2srt3mou6a-uc.a.run.app'
+
+    axios.post(`${apiUrl}/api/auth/signup`, obj)
       .then((res) => {
         const { data } = res
         if (data?.success === true) {

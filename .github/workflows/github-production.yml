@@ -29,6 +29,5 @@ jobs:
       
     - name: Deploy
       run: |
-        gcloud run deploy ${{ secrets.GCP_APPLICATION }} --image gcr.io/${{ secrets.GCP_PROJECT }}/${{ secrets.GCP_APPLICATION }} \
-        --region=${{ secrets.REGION }} --platform managed --allow-unauthenticated
+        gcloud run deploy ${{ secrets.GCP_APPLICATION }} --image gcr.io/${{ secrets.GCP_PROJECT }}/${{ secrets.GCP_APPLICATION }} --region=${{ secrets.REGION }} --platform managed --allow-unauthenticated --port 80
         gcloud run services update-traffic ${{ secrets.GCP_APPLICATION }} --region=${{ secrets.REGION }} --to-revisions LATEST=100
