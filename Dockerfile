@@ -1,4 +1,4 @@
-FROM node:16.13.2 as client-app
+FROM node:16 as client-app
 
 WORKDIR /client
 
@@ -10,14 +10,13 @@ COPY ./public ./public
 
 COPY ./src ./src
 
-ENV REACT_APP_baseAPIURL=http://localhost:4000
-
 RUN yarn run build
 
-FROM nginx:latest
+FROM node:16 as react-app
+WORKDIR /root/
 
-COPY --from=client-app /client/build/ /usr/share/nginx/html
+RUN yarn global add serve
 
-EXPOSE 8080
+COPY --from=client-app /client/build ./client/build
 
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["yarn", "run", "production"]
