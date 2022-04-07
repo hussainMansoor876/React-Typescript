@@ -14,10 +14,10 @@ ENV REACT_APP_baseAPIURL=http://localhost:4000
 
 RUN yarn run build
 
-yarn global add serve
+FROM nginx:latest
 
-COPY --from=client-app /client/build ./client/build
+COPY --from=client-app /client/build/ /usr/share/nginx/html
 
-yarn global add serve
+EXPOSE 8080
 
-CMD ["yarn", "run", "production"]
+CMD ["nginx", "-g", "daemon off;"]
