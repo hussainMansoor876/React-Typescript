@@ -1,9 +1,9 @@
 # Getting Started with React App
 
 First clone this project by using 
-### git clone https://github.com/hussainMansoor876/node-typescript.git
+### git clone https://github.com/hussainMansoor876/test-form.git
 
-Then cd node-typescript
+Then cd test-form
 
 Open cmd/terminal/powershell to install packages in your machine and type:
 ## yarn and Press Enter
